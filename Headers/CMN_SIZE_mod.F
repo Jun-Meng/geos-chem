@@ -394,7 +394,9 @@
 
       ! NRH -- number of relative humidity bins (rvm, bmy, 2/27/02)
       INTEGER,    PARAMETER :: NRH = 5
-
+      
+      ! NRH -- number of relative humidity bins for SNA (JUN MENG, MAY/28/2019)
+      INTEGER,    PARAMETER :: NRH_SNA = 6
 #if   defined( TOMAS )
       INTEGER,    PARAMETER :: TOMASSPEC = 8
 

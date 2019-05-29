@@ -2472,7 +2472,7 @@ c---TROP-QUICK  (must scale solar flux for W=5)
       LBRC = Input_Opt%LBRC
             
       ! Define data directory for FAST-JX input
-      DATA_DIR = TRIM( Input_Opt%CHEM_INPUTS_DIR )//'FAST_JX/v2019-04/'
+      DATA_DIR = TRIM( Input_Opt%CHEM_INPUTS_DIR )//'FAST_JX/v2019-06/'
 
       ! IMPORTANT: aerosol_mod.F and dust_mod.F expect aerosols in this order
       DATA SPECFIL /"so4.dat","soot.dat","org.dat",
