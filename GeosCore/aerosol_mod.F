@@ -1287,7 +1287,7 @@
       LOGICAL             :: FIRST = .TRUE.
       LOGICAL             :: LINTERP
       CHARACTER(LEN=16)   :: STAMP
-      INTEGER             :: I, J, L, N, R, IRH, W, IRHN, IRH_SNA
+      INTEGER             :: I, J, L, N, R, IRH, W, IRHN
       INTEGER             :: AA, IWV, IIWV, NWVS, IR, NRT
       REAL*4              :: TEMP(IIPAR,JJPAR,LGLOB)
       REAL(fp)            :: TEMP2(IIPAR,JJPAR,LLPAR)
@@ -1302,19 +1302,15 @@
 
       ! Effective radius at RH bins read in from "FJX_spec.dat"
       REAL(fp)		  :: RW(NRH)	
-      REAL(fp)            :: RW_SNA(NRH+1)    
+
       ! Effective radius at RH after interpolation
       REAL(fp)		  :: REFF       
 
       ! Q at different RH bins read in from "FJX_spec.dat"
       REAL(fp)            :: AW(NRH)
-      REAL(fp)            :: AW_SNA(NRH+1)
       REAL(fp)            :: QW(NRH)	
-      REAL(fp)            :: QW_SNA(NRH+1)
       REAL(fp)            :: SSW(NRH)
-      REAL(fp)            :: SSW_SNA(NRH+1)
       REAL(fp)            :: ASYW(NRH)	
-      REAL(fp)            :: ASYW_SNA(NRH+1)
       REAL(fp)            :: AW0
       REAL(fp)            :: QW0
       REAL(fp)            :: SSW0
@@ -1350,9 +1346,7 @@
       ! Relative Humidities
       REAL(fp),  SAVE     :: RH(NRH)   = (/0e+0_fp,0.5e+0_fp, 
      &   0.7e+0_fp,0.8e+0_fp,0.9e+0_fp/)
-      ! Relative Humidities for SNA, Jun Meng, MAY 28 2019
-       REAL(fp),  SAVE     :: RH_SNA(NRH+1)   = (/0e+0_fp,0.35e+0_fp,
-     &   0.5e+0_fp,0.7e+0_fp,0.8e+0_fp,0.9e+0_fp/)
+
       ! Temporary variables
       REAL(fp)            :: RAER, SADSTRAT, RHOSTRAT, XSASTRAT
       INTEGER             :: ISTRAT
@@ -1756,21 +1750,6 @@
             ASYW(R) = ASYMAA(IWV,R,N)
 
          ENDDO
-         
-         IF (N.eq.1) THEN
-                 RW_SNA(1)=RW(1)
-                 QW_SNA(1)=QW(1)
-                 AW_SNA(1)=AW(1)
-                 SSW_SNA(1)=SSW(1)
-                 ASYW_SNA(1)=ASYW(1)
-                 DO R = 2, NRH+1    
-                     RW_SNA(R)=RW(R-1)
-                     QW_SNA(R)   = QQAA(IWV,R-1,N)
-                     AW_SNA(R)   = ALPHAA(IWV,R-1,N)
-                     SSW_SNA(R)  = SSAA(IWV,R-1,N)
-                     ASYW_SNA(R) = ASYMAA(IWV,R-1,N)
-                 ENDDO
-         ENDIF
 
          ! Loop over grid boxes
 !$OMP PARALLEL DO
@@ -1804,32 +1783,16 @@
             ! Sort into relative humidity bins
             ! Currently uses the 0, 50, 70, 80, 90% RH bins
             ! (95 and 99% also stored in data files but not used)
-            IF (N.eq.1) THEN
-                IF (RELHUM <= RH_SNA(2)) THEN
-                        IRH_SNA = 1
-                ELSE IF (RELHUM <= RH_SNA(3)) THEN
-                        IRH_SNA = 2 
-                ELSE IF (RELHUM <= RH_SNA(4)) THEN 
-                        IRH_SNA = 3
-                ELSE IF (RELHUM <= RH_SNA(5)) THEN
-                        IRH_SNA = 4 
-                ELSE IF (RELHUM <= RH_SNA(6)) THEN
-                        IRH_SNA = 5 
-                ELSE
-                        IRH_SNA = 6
-                ENDIF 
-            ELSE
-                IF (      RELHUM <= RH(2) ) THEN   
-                        IRH = 1
-                ELSE IF ( RELHUM <= RH(3) ) THEN
-                        IRH = 2
-                ELSE IF ( RELHUM <= RH(4) ) THEN
-                        IRH = 3
-                ELSE IF ( RELHUM <= RH(5) ) THEN
-                        IRH = 4
-                ELSE 
-                        IRH = 5
-                ENDIF
+            IF (      RELHUM <= RH(2) ) THEN   
+               IRH = 1
+            ELSE IF ( RELHUM <= RH(3) ) THEN
+               IRH = 2
+            ELSE IF ( RELHUM <= RH(4) ) THEN
+               IRH = 3
+            ELSE IF ( RELHUM <= RH(5) ) THEN
+               IRH = 4
+            ELSE 
+               IRH = 5
             ENDIF
 
             ! save the index of the relative humidity into array that is
@@ -1865,33 +1828,6 @@
                ASYW0=ASYW(1)
             ENDIF
 
-            IF (N.eq.1) THEN
-            
-              IF ( IRH_SNA == NRH_SNA ) THEN
-                    REFF     = RW_SNA(NRH_SNA)
-                    SCALEA   = AW_SNA(NRH_SNA)   / AW0
-                    SCALEQ   = QW_SNA(NRH_SNA)   / QW0
-                    SCALESSA = SSW_SNA(NRH_SNA)  / SSW0
-                    SCALEASY = ASYW_SNA(NRH_SNA) / ASYW0
-              ELSE
-                  ! Interpolate between different RH
-                  FRAC = (RELHUM-RH_SNA(IRH_SNA)) /
-     &                        (RH_SNA(IRH_SNA+1)-RH_SNA(IRH_SNA))
-                  IF ( FRAC > 1.0d0 ) FRAC = 1.0d0
-                  REFF    = FRAC*RW_SNA(IRH_SNA+1)  + 
-     &                        (1.d0-FRAC)*RW_SNA(IRH_SNA)
-                  SCALEA  =(FRAC*AW_SNA(IRH_SNA+1)  + 
-     &                        (1.d0-FRAC)*AW_SNA(IRH_SNA))/AW0
-                  SCALEQ  =(FRAC*QW_SNA(IRH_SNA+1)  + 
-     &                        (1.d0-FRAC)*QW_SNA(IRH_SNA))/QW0
-                  SCALESSA=(FRAC*SSW_SNA(IRH_SNA+1) + 
-     &                        (1.d0-FRAC)*SSW_SNA(IRH_SNA))/SSW0
-                  SCALEASY=(FRAC*ASYW_SNA(IRH_SNA+1)+ 
-     &                        (1.d0-FRAC)*ASYW_SNA(IRH_SNA))/ASYW0
-              ENDIF
-
-            ELSE
-
             IF ( IRH == NRH ) THEN
                REFF     = RW(NRH)
                SCALEA   = AW(NRH)   / AW0  !QW(1) is dry extinction eff.
@@ -1908,7 +1844,7 @@
                SCALESSA=(FRAC*SSW(IRH+1) + (1.d0-FRAC)*SSW(IRH))/SSW0
                SCALEASY=(FRAC*ASYW(IRH+1)+ (1.d0-FRAC)*ASYW(IRH))/ASYW0
             ENDIF
-            ENDIF
+
             SCALER  = REFF / RW(1)
             SCALEOD = SCALEQ * SCALER * SCALER
 
