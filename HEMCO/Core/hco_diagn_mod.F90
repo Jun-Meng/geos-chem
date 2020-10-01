@@ -381,7 +381,8 @@ CONTAINS
                      OptValChar=OutTimeStampChar, FOUND=FOUND, RC=RC )
     IF ( RC /= HCO_SUCCESS ) RETURN
     IF ( .NOT. FOUND ) THEN
-       OutTimeStamp = HcoDiagnEnd
+     !  OutTimeStamp = HcoDiagnEnd
+         OutTimeStamp = HcoDiagnStart
     ELSE
        CALL TRANLC( OutTimeStampChar )
        IF (     TRIM(OutTimeStampChar) == 'start' ) THEN
@@ -395,9 +396,11 @@ CONTAINS
 
        ELSE
           WRITE(MSG,*) 'Unrecognized output time stamp location: ', &
-             TRIM(OutTimeStampChar), ' - will use default (end)'
+             !TRIM(OutTimeStampChar), ' - will use default (end)'
+             TRIM(OutTimeStampChar), ' - will use default (start)'
           CALL HCO_WARNING(HcoState%Config%Err,MSG,RC,THISLOC=LOC,WARNLEV=1)
-          OutTimeStamp = HcoDiagnEnd
+          !OutTimeStamp = HcoDiagnEnd
+           OutTimeStamp = HcoDiagnStart
        ENDIF 
     ENDIF
 
@@ -4473,7 +4476,8 @@ CONTAINS
 ! !LOCAL VARIABLES:
 !
     INTEGER             :: N
-    CHARACTER(LEN=255)  :: LINE
+    !CHARACTER(LEN=255)  :: LINE
+    CHARACTER(LEN=OPTLEN)  :: LINE
     CHARACTER(LEN=255)  :: MSG
     CHARACTER(LEN=255)  :: SUBSTR(255) 
     CHARACTER(LEN=255)  :: LOC = 'DiagnFileGetNext (hco_diagn_mod.F90)'

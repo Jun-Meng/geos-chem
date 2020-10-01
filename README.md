@@ -1,17 +1,10 @@
-README -- Describes contents of GEOS-Chem repository
+README -- How to use this repo to run HEMCO standalon to generate offline
 
-01 Feb 2017
-GEOS-Chem Support Team
-geos-chem-support@as.harvard.edu
+v11-01-Patches-for-HEMCO-usingNativeResMet
 
+30 September 2020
+Jun Meng
+jun.meng@dal.ca
 
-This repository contains the source code for GEOS-Chem v11-01.
-
-Please see the following resources for more information:
-
-1. http://manual.geos-chem.org  (Contains download instructions)
-2. http://wiki.geos-chem.org/GEOS-Chem_v11-01
-3. http://wiki.geos-chem.org/GEOS-Chem_v11-01_benchmark_history
-4. http://wiki.geos-chem.org/HEMCO
-5. http://wiki.geos-chem.org/GEOS-Chem-Unit-Tester
-6. http://wiki.geos-chem.org/Creating_GEOS-Chem_run_directories
+This repository contains the source code for GEOS-Chem v11-01 (with modifications) and run directory for HEMCO standalon.
+The modifications to standard GEOS-Chem v11-01 are mostly from David A. Ridley.

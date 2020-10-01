@@ -1912,7 +1912,7 @@ CONTAINS
     INTEGER, PARAMETER   :: J30S = 61, J30N = 121
 
 #elif defined( GRID05x0625 )
-
+    INTEGER, PARAMETER :: J30S = 1,  J30N = 83
     !%%% ADD PLACEHOLDER VALUES, THESE AREN'T REALLY USED ANYMORE %%%
 #if   defined( NESTED_AS )
       INTEGER, PARAMETER :: J30S = 1,  J30N = 83
@@ -1935,7 +1935,7 @@ CONTAINS
 #endif
 
 #elif defined( GRID025x03125 )
-
+    INTEGER, PARAMETER   :: J30S = 1, J30N = 161
 #if   defined( NESTED_CH )
     INTEGER, PARAMETER   :: J30S = 1, J30N = 161
 #elif defined( NESTED_NA )

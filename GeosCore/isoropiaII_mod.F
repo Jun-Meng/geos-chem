@@ -441,7 +441,8 @@
             !---------------------
             ! COUPLED SIMULATION
             !---------------------
-
+            !reduce HNO3 by 75% MH     Oct. 12th  2017 by Jun 
+             Spc(I,J,L,id_HNO3) = 0.75d0 * Spc(I,J,L,id_HNO3)
             ! Compute gas-phase HNO3 [mole/m3] from HNO3 tracer
             GNO3 = Spc(I,J,L,id_HNO3)
             GNO3 = MAX( GNO3 * 1.e+3_fp / ( 63.e+0_fp * VOL ), CONMIN )
